@@ -536,6 +536,36 @@ class Brakeman::AliasProcessor < Brakeman::SexpProcessor
     exp
   end
 
+  def process_dstr exp
+    process_default exp
+
+    if exp.each_sexp.all? { |e| string? e }
+      str_value = exp.map do |e|
+        if e.is_a? String
+          e
+        elsif string? e
+          e.value
+        else
+          nil
+        end
+      end.compact.join
+
+      exp = Sexp.new(:str, str_value)
+    end
+
+    exp
+  end
+
+  def process_evstr exp
+    process_default exp
+
+    if string? exp[1] # all it is is #{ "string" }
+      exp[1]
+    else
+      exp
+    end
+  end
+
   #Merge values into hash when processing
   #
   # h.merge! :something => "value"
