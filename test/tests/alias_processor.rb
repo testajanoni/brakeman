@@ -1051,4 +1051,12 @@ class AliasProcessorTests < Minitest::Test
     y
     INPUT
   end
+
+  def test_string_freeze
+    assert_output <<-'INPUT', <<-'OUTPUT'
+      x = "#{"hello".freeze}"
+    INPUT
+      x = "hello"
+    OUTPUT
+  end
 end
